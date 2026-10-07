@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wallpaper Hub Admin</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui;background:#f3f6fa;color:#172536}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}.layout{min-height:100vh;display:flex}
+aside{width:235px;background:#0b1724;color:#fff;padding:18px 12px;position:fixed;inset:0 auto 0 0}.logo{font-size:20px;font-weight:800;padding:10px 12px 25px}.logo span{color:#20a8ee}
+.nav{display:block;width:100%;padding:12px;border-radius:9px;background:transparent;color:#9eb0c2;text-align:left;margin:3px 0}.nav.active,.nav:hover{background:#15283c;color:#fff}.main{margin-left:235px;width:calc(100% - 235px)}.top{height:65px;background:#fff;border-bottom:1px solid #dce5ed;display:flex;align-items:center;padding:0 22px;gap:10px}.top h2{margin:0;font-size:19px}.admin{margin-left:auto;background:#19a25c;color:#fff;padding:5px 10px;border-radius:20px;font-size:12px}
+.content{padding:22px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat{background:#fff;border:1px solid #dce5ed;border-radius:14px;padding:18px}.stat small{color:#718398}.stat b{display:block;font-size:26px;margin-top:6px}.panel{background:#fff;border:1px solid #dce5ed;border-radius:14px;padding:18px;margin-top:18px}.panelHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.panelHead h3{margin:0}.primary{background:#1598df;color:#fff;padding:10px 15px;border-radius:9px;font-weight:700}.search{padding:10px 12px;border:1px solid #d7e0e8;border-radius:9px;outline:0}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:10px 8px;border-top:1px solid #edf1f5;text-align:left;font-size:13px}.thumb{width:52px;height:62px;object-fit:cover;border-radius:7px}.pill{padding:4px 8px;border-radius:20px;background:#eaf6ff;color:#1289ca;font-size:11px}.actions button{padding:7px 9px;border-radius:7px;margin-right:4px}.edit{background:#eaf6ff;color:#0b8fd3}.delete{background:#ffecef;color:#e42f4e}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.box{background:#fff;width:min(560px,100%);max-height:92vh;overflow:auto;border-radius:16px;padding:20px}.boxHead{display:flex;justify-content:space-between;align-items:center}.boxHead h3{margin:0}.close{background:#eef2f5;border-radius:8px;width:34px;height:34px}.form{display:grid;gap:12px;margin-top:15px}.form label{font-size:12px;font-weight:700;color:#53677a}.form input,.form select,.form textarea{width:100%;padding:11px;border:1px solid #d6e0e8;border-radius:9px;outline:0}.form textarea{min-height:80px;resize:vertical}.preview{width:100px;height:125px;object-fit:cover;border-radius:9px;display:none}.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.login{min-height:100vh;display:grid;place-items:center;background:#07111b}.loginBox{background:#fff;width:min(380px,92%);padding:25px;border-radius:16px}.loginBox h2{margin-top:0}.loginBox input{width:100%;padding:12px;margin:7px 0;border:1px solid #d5dfe8;border-radius:9px}.loginBtn{width:100%;padding:12px;background:#1598df;color:white;border-radius:9px;margin-top:8px;font-weight:700}
+@media(max-width:750px){aside{width:65px;padding:12px 8px}.logo{font-size:0;text-align:center}.logo:after{content:'🖼️';font-size:22px}.nav{font-size:0;text-align:center}.nav:first-letter{font-size:20px}.main{margin-left:65px;width:calc(100% - 65px)}.stats{grid-template-columns:1fr 1fr}.content{padding:12px}.table th:nth-child(3),.table td:nth-child(3),.table th:nth-child(4),.table td:nth-child(4){display:none}.row2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="login" class="login">
+ <div class="loginBox"><h2>Wallpaper Hub Admin</h2><p>Admin login</p><input id="email" type="email" placeholder="Admin email"><input id="pass" type="password" placeholder="Password"><button class="loginBtn" onclick="login()">Login</button><p id="err" style="color:#e33;font-size:12px"></p></div>
+</div>
+<div id="adminApp" class="layout" style="display:none">
+<aside><div class="logo">Wallpaper <span>Hub</span></div><button class="nav active" onclick="page('dashboard')">▦ Dashboard</button><button class="nav" onclick="page('wallpapers')">🖼️ Wallpapers</button><button class="nav" onclick="openModal()">＋ Add Wallpaper</button><button class="nav" onclick="page('categories')">▤ Categories</button><button class="nav" onclick="page('users')">♙ Users</button><button class="nav" onclick="page('analytics')">▥ Analytics</button><button class="nav" onclick="page('settings')">⚙ Settings</button><button class="nav" onclick="logout()">↪ Logout</button></aside>
+<div class="main"><header class="top"><h2 id="title">Dashboard</h2><span class="admin">Admin</span></header><section class="content" id="content"></section></div>
+</div>
+
+<div id="modal" class="modal"><div class="box"><div class="boxHead"><h3 id="modalTitle">Add Wallpaper</h3><button class="close" onclick="closeModal()">×</button></div>
+<form class="form" onsubmit="saveWallpaper(event)">
+<input type="hidden" id="editId">
+<div><label>Wallpaper Name</label><input id="name" required placeholder="e.g. Mountain Lake"></div>
+<div class="row2"><div><label>Category</label><select id="cat"><option>Nature</option><option>Cars</option><option>Anime</option><option>City</option><option>Travel</option><option>Abstract</option><option>Movies</option></select></div><div><label>Type</label><select id="type"><option>Recent</option><option>Featured</option><option>Popular</option></select></div></div>
+<div><label>Wallpaper Image URL</label><input id="url" required placeholder="https://.../wallpaper.jpg" oninput="preview()"></div>
+<img id="imgPreview" class="preview">
+<div><label>Tags</label><input id="tags" placeholder="nature, mountain, 4k"></div>
+<div><label>Description</label><textarea id="desc" placeholder="Wallpaper description"></textarea></div>
+<button class="primary" type="submit">Save Wallpaper</button>
+</form></div></div>
+
+<script>
+const demo=[
+{id:1,name:'Mountain Lake',cat:'Nature',type:'Featured',url:'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=700&q=85',tags:'nature,mountain,4k'},
+{id:2,name:'Sports Car',cat:'Cars',type:'Popular',url:'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=700&q=85',tags:'car,sports,4k'},
+{id:3,name:'Forest',cat:'Nature',type:'Recent',url:'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=700&q=85',tags:'forest,nature'},
+{id:4,name:'City Night',cat:'City',type:'Popular',url:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=700&q=85',tags:'city,night'}
+];
+let data=JSON.parse(localStorage.getItem('wh_admin_wallpapers')||'null')||demo;
+function login(){if(document.getElementById('email').value && document.getElementById('pass').value){localStorage.setItem('wh_admin_login','1');start()}else document.getElementById('err').textContent='Enter email and password'}
+function start(){document.getElementById('login').style.display='none';document.getElementById('adminApp').style.display='flex';page('dashboard')}
+function logout(){localStorage.removeItem('wh_admin_login');location.reload()}
+function save(){localStorage.setItem('wh_admin_wallpapers',JSON.stringify(data))}
+function page(p){document.getElementById('title').textContent=p[0].toUpperCase()+p.slice(1);let c=document.getElementById('content');
+if(p==='dashboard')c.innerHTML=`<div class="stats"><div class="stat"><small>Total Wallpapers</small><b>${data.length}</b></div><div class="stat"><small>Total Downloads</small><b>24.5K</b></div><div class="stat"><small>Total Users</small><b>1,320</b></div><div class="stat"><small>Categories</small><b>${new Set(data.map(x=>x.cat)).size}</b></div></div><div class="panel"><div class="panelHead"><h3>Recent Wallpapers</h3><button class="primary" onclick="openModal()">＋ Add Wallpaper</button></div>${table()}</div>`;
+else if(p==='wallpapers')c.innerHTML=`<div class="panel"><div class="panelHead"><h3>Manage Wallpapers</h3><div><input class="search" id="filter" placeholder="Search..." oninput="drawTable()"></div></div><div id="tbl">${table()}</div></div>`;
+else c.innerHTML=`<div class="panel"><h3>${p[0].toUpperCase()+p.slice(1)}</h3><p style="color:#718398">This section is ready for backend integration.</p></div>`}
+function table(){return `<table class="table"><thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Type</th><th>Actions</th></tr></thead><tbody id="rows">${data.map(w=>`<tr><td><img class="thumb" src="${w.url}"></td><td><b>${w.name}</b><br><small style="color:#718398">${w.tags||''}</small></td><td><span class="pill">${w.cat}</span></td><td>${w.type}</td><td class="actions"><button class="edit" onclick="edit(${w.id})">Edit</button><button class="delete" onclick="removeW(${w.id})">Delete</button></td></tr>`).join('')}</tbody></table>`}
+function drawTable(){let f=(document.getElementById('filter')?.value||'').toLowerCase();let old=data;data=old.filter(w=>(w.name+' '+w.cat+' '+w.tags).toLowerCase().includes(f));document.getElementById('tbl').innerHTML=table();data=old}
+function openModal(id=null){document.getElementById('modal').classList.add('show');document.getElementById('modalTitle').textContent=id?'Edit Wallpaper':'Add Wallpaper';if(id){let w=data.find(x=>x.id===id);document.getElementById('editId').value=id;document.getElementById('name').value=w.name;document.getElementById('cat').value=w.cat;document.getElementById('type').value=w.type;document.getElementById('url').value=w.url;document.getElementById('tags').value=w.tags||'';document.getElementById('desc').value=w.desc||'';preview()}else{document.querySelector('form').reset();document.getElementById('editId').value='';document.getElementById('imgPreview').style.display='none'}}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+function preview(){let u=document.getElementById('url').value,im=document.getElementById('imgPreview');if(u){im.src=u;im.style.display='block'}else im.style.display='none'}
+function saveWallpaper(e){e.preventDefault();let id=+document.getElementById('editId').value||Date.now(),w={id,name:document.getElementById('name').value,cat:document.getElementById('cat').value,type:document.getElementById('type').value,url:document.getElementById('url').value,tags:document.getElementById('tags').value,desc:document.getElementById('desc').value};let i=data.findIndex(x=>x.id===id);if(i>=0)data[i]=w;else data.unshift(w);save();closeModal();page('wallpapers')}
+function edit(id){openModal(id)}function removeW(id){if(confirm('Delete this wallpaper?')){data=data.filter(x=>x.id!==id);save();page('wallpapers')}}
+if(localStorage.getItem('wh_admin_login'))start();
+</script>
+</body>
+</html>
