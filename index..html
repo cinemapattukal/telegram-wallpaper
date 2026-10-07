@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Wallpaper Hub - Telegram Mini App</title>
+<style>
+:root{--bg:#07111c;--panel:#0e1b29;--panel2:#142538;--text:#f5f8fc;--muted:#8fa2b7;--blue:#229ed9;--line:#22354a;--danger:#ff5364}
+*{box-sizing:border-box}html,body{margin:0;background:#020912;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+button,input{font:inherit}button{border:0;color:inherit;cursor:pointer}
+.app{width:min(100%,1100px);min-height:100vh;margin:auto;background:var(--bg);position:relative;overflow:hidden}
+.top{height:64px;display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);background:rgba(7,17,28,.96);position:sticky;top:0;z-index:20}
+.logo{width:40px;height:40px;border-radius:12px;background:var(--blue);display:grid;place-items:center;font-size:21px}
+.brand{font-weight:800}.brand small{display:block;color:var(--muted);font-size:11px;font-weight:500;margin-top:2px}
+.top-spacer{flex:1}.icon{width:38px;height:38px;border-radius:12px;background:var(--panel2);display:grid;place-items:center}
+.page{padding:16px 16px 88px}.search{display:flex;gap:9px;margin-bottom:14px}.search input{flex:1;background:var(--panel2);border:1px solid #2a4058;color:#fff;padding:13px 15px;border-radius:15px;outline:0}.search input:focus{border-color:var(--blue)}
+.filters{display:flex;gap:8px;overflow:auto;padding-bottom:4px;margin-bottom:15px}.chip{white-space:nowrap;background:var(--panel2);color:#b9c8d8;padding:9px 14px;border-radius:999px;font-size:13px}.chip.active{background:var(--blue);color:#fff}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:18px 0 10px}.section-title h2{font-size:18px;margin:0}.link{color:#40b8f3;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{position:relative;border-radius:14px;overflow:hidden;background:var(--panel2);aspect-ratio:9/14}.card img{width:100%;height:100%;object-fit:cover;display:block}.card:after{content:"";position:absolute;inset:auto 0 0;height:35%;background:linear-gradient(transparent,rgba(0,0,0,.85))}.card-info{position:absolute;left:9px;right:7px;bottom:8px;z-index:2;font-size:12px;font-weight:700}.card-info span{display:block;color:#b9c7d5;font-size:10px;font-weight:500;margin-top:2px}.badge{position:absolute;z-index:3;top:7px;left:7px;background:rgba(0,0,0,.55);padding:4px 7px;border-radius:7px;font-size:10px}
+.category-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.category{height:120px;border-radius:15px;overflow:hidden;position:relative}.category img{width:100%;height:100%;object-fit:cover}.category:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent,rgba(0,0,0,.85))}.category div{position:absolute;z-index:2;left:10px;bottom:9px;font-weight:800}.category small{display:block;color:#b9c7d5;font-weight:500;margin-top:3px}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,1100px);height:70px;background:rgba(7,17,28,.98);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);z-index:30}.nav{background:transparent;color:#8195a9;font-size:11px}.nav b{display:block;font-size:20px;margin-bottom:3px}.nav.active{color:#25a9e8}
+.empty{padding:45px 10px;text-align:center;color:var(--muted)}
+.viewer{position:fixed;inset:0;background:#000;z-index:100;display:none}.viewer.show{display:block}.viewer img{width:100%;height:100%;object-fit:contain}.viewer-top{position:absolute;top:0;left:0;right:0;padding:15px;display:flex;justify-content:space-between;z-index:2}.viewer-actions{position:absolute;right:15px;bottom:35%;display:flex;flex-direction:column;gap:12px}.round{width:48px;height:48px;border-radius:50%;background:rgba(15,25,35,.8);font-size:21px}.viewer-bottom{position:absolute;left:16px;right:16px;bottom:20px;display:flex;gap:9px}.viewer-bottom button{flex:1;padding:13px;border-radius:13px;background:var(--blue);font-weight:700}.viewer-bottom button.secondary{background:rgba(30,43,57,.9)}
+.profile{display:grid;place-items:center;text-align:center;padding:25px 0}.avatar{width:88px;height:88px;border-radius:50%;object-fit:cover;border:3px solid var(--blue)}.profile h1{font-size:21px;margin:10px 0 3px}.profile p{margin:0;color:var(--muted)}.menu{margin-top:22px;border:1px solid var(--line);border-radius:16px;overflow:hidden}.menu button{display:flex;width:100%;padding:16px;background:var(--panel);border-bottom:1px solid var(--line);text-align:left}.menu button:last-child{border:0}.menu i{width:30px}.menu .logout{color:#ff7180}
+.login{min-height:100vh;display:grid;place-items:center;padding:30px;background:radial-gradient(circle at 50% 20%,#103453,#07111c 55%)}.login-box{text-align:center;width:min(390px,100%)}.tglogo{width:90px;height:90px;border-radius:50%;background:var(--blue);display:grid;place-items:center;font-size:45px;margin:0 auto 22px}.login-box h1{font-size:28px;margin:0 0 8px}.login-box p{color:#a9bacb;line-height:1.5}.login-btn{width:100%;margin-top:22px;padding:15px;border-radius:15px;background:var(--blue);font-weight:800}.hidden{display:none!important}
+.admin{background:#f4f7fa;color:#142235;min-height:100vh}.admin .admin-top{padding:16px;background:#fff;border-bottom:1px solid #dce4ec;display:flex;align-items:center;gap:10px}.admin .admin-top b{font-size:20px}.admin-body{display:grid;grid-template-columns:210px 1fr}.side{background:#fff;border-right:1px solid #dce4ec;min-height:calc(100vh - 69px);padding:12px}.side button{width:100%;padding:12px;text-align:left;background:#fff;border-radius:9px;margin-bottom:4px;color:#41546a}.side button.active{background:#e9f5ff;color:#1289ca}.dash{padding:18px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{padding:18px;background:#fff;border:1px solid #dce4ec;border-radius:12px}.stat small{color:#6e8195}.stat b{display:block;font-size:25px;margin-top:6px}.admin-table{margin-top:15px;background:#fff;border:1px solid #dce4ec;border-radius:12px;padding:14px}.admin-table h3{margin:0 0 12px}.row{display:grid;grid-template-columns:60px 1.5fr 1fr 80px 80px;gap:10px;align-items:center;padding:10px 0;border-top:1px solid #edf1f5;font-size:13px}.row img{width:50px;height:50px;object-fit:cover;border-radius:7px}.edit{background:#168ee0;padding:7px 10px;border-radius:7px}.delete{background:#ff5364;padding:7px 10px;border-radius:7px}
+@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.page{padding:14px 12px 86px}.stats{grid-template-columns:repeat(2,1fr)}.admin-body{display:block}.side{display:flex;overflow:auto;min-height:auto;border-right:0;border-bottom:1px solid #dce4ec}.side button{white-space:nowrap;width:auto;margin-right:5px}.row{grid-template-columns:50px 1fr 55px}.row .hide-mobile{display:none}.category{height:110px}}
+@media(min-width:701px){.page{padding-left:24px;padding-right:24px}.grid{grid-template-columns:repeat(5,1fr)}}
+</style>
+</head>
+<body>
+<div id="login" class="login">
+  <div class="login-box">
+    <div class="tglogo">➤</div>
+    <h1>Wallpaper Hub</h1>
+    <p>Beautiful wallpapers for your phone.<br>HD & 4K • Free Download • Save Favorites</p>
+    <button class="login-btn" onclick="login()">➤ &nbsp; Continue with Telegram</button>
+    <p style="font-size:12px;margin-top:14px">Demo mode — Telegram authentication can be connected later.</p>
+  </div>
+</div>
+
+<div id="app" class="app hidden">
+<header class="top">
+  <div class="logo">🖼️</div><div class="brand">Wallpaper Hub<small>Telegram Mini App</small></div>
+  <div class="top-spacer"></div><button class="icon" onclick="show('profile')">⋮</button>
+</header>
+<main id="content"></main>
+<nav class="bottom">
+  <button class="nav active" data-page="home" onclick="show('home')"><b>⌂</b>Home</button>
+  <button class="nav" data-page="categories" onclick="show('categories')"><b>▦</b>Categories</button>
+  <button class="nav" data-page="favorites" onclick="show('favorites')"><b>♡</b>Favorites</button>
+  <button class="nav" data-page="profile" onclick="show('profile')"><b>♙</b>Profile</button>
+</nav>
+</div>
+
+<div id="viewer" class="viewer">
+  <div class="viewer-top"><button class="round" onclick="closeViewer()">×</button><button class="round" onclick="shareCurrent()">⋮</button></div>
+  <img id="viewerImg" src="">
+  <div class="viewer-actions"><button class="round" onclick="toggleFavorite()">♡</button><button class="round" onclick="downloadCurrent()">↓</button><button class="round" onclick="shareCurrent()">↗</button></div>
+  <div class="viewer-bottom"><button onclick="downloadCurrent()">⬇ Download</button><button class="secondary" onclick="shareCurrent()">Share</button></div>
+</div>
+
+<script>
+const wallpapers=[
+ {id:1,title:'Mountain Lake',cat:'Nature',url:'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=85'},
+ {id:2,title:'Sports Car',cat:'Cars',url:'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=900&q=85'},
+ {id:3,title:'Forest',cat:'Nature',url:'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=900&q=85'},
+ {id:4,title:'City Night',cat:'City',url:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=900&q=85'},
+ {id:5,title:'Ocean',cat:'Nature',url:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=85'},
+ {id:6,title:'Flowers',cat:'Nature',url:'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85'},
+ {id:7,title:'Mountain Road',cat:'Travel',url:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=85'},
+ {id:8,title:'Anime Style',cat:'Anime',url:'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=900&q=85'}
+];
+const cats=[
+ ['Nature',wallpapers[0].url,'1.5K Wallpapers'],['Cars',wallpapers[1].url,'980 Wallpapers'],
+ ['Anime',wallpapers[7].url,'1.2K Wallpapers'],['City',wallpapers[3].url,'860 Wallpapers'],
+ ['Travel',wallpapers[6].url,'740 Wallpapers'],['Abstract',wallpapers[5].url,'1.1K Wallpapers']
+];
+let favorites=JSON.parse(localStorage.getItem('wh_fav')||'[]'), current=null, query='';
+
+function login(){localStorage.setItem('wh_login','1');document.getElementById('login').classList.add('hidden');document.getElementById('app').classList.remove('hidden');show('home')}
+function logout(){localStorage.removeItem('wh_login');location.reload()}
+function card(w){return `<article class="card" onclick="openViewer(${w.id})"><img loading="lazy" src="${w.url}"><span class="badge">${w.cat}</span><div class="card-info">${w.title}<span>HD Wallpaper</span></div></article>`}
+function home(){
+ let list=wallpapers.filter(w=>(w.title+' '+w.cat).toLowerCase().includes(query.toLowerCase()));
+ return `<div class="page">
+ <div class="search"><input id="search" value="${query}" placeholder="⌕  Search wallpapers..." oninput="query=this.value;renderHome()"><button class="icon">☷</button></div>
+ <div class="filters"><button class="chip active">Recent</button><button class="chip">Featured</button><button class="chip">Popular</button><button class="chip">Random</button></div>
+ <div class="section-title"><h2>Latest Wallpapers</h2><span class="link">${list.length} wallpapers</span></div>
+ <div class="grid">${list.length?list.map(card).join(''):'<div class="empty" style="grid-column:1/-1">No wallpapers found</div>'}</div>
+ </div>`
+}
+function categories(){return `<div class="page"><div class="section-title"><h2>Categories</h2><span class="link">View All</span></div><div class="category-grid">${cats.map(c=>`<div class="category" onclick="category('${c[0]}')"><img src="${c[1]}"><div>${c[0]}<small>${c[2]}</small></div></div>`).join('')}</div></div>`}
+function category(name){query=name;show('home')}
+function favoritesPage(){let list=wallpapers.filter(w=>favorites.includes(w.id));return `<div class="page"><div class="section-title"><h2>♥ My Favorites</h2><span class="link">${list.length}</span></div><div class="grid">${list.length?list.map(card).join(''):'<div class="empty" style="grid-column:1/-1">No favorites yet.<br>Open a wallpaper and tap ♡</div>'}</div></div>`}
+function profile(){return `<div class="page"><div class="profile"><img class="avatar" src="https://i.pravatar.cc/200?img=12"><h1>Telegram User</h1><p>@wallpaper_user</p></div><div class="menu"><button onclick="show('favorites')"><i>♡</i> My Favorites</button><button><i>↓</i> Download History</button><button><i>⚙</i> Settings</button><button><i>ⓘ</i> About</button><button class="logout" onclick="logout()"><i>⊗</i> Logout</button></div><div style="text-align:center;margin-top:25px"><button onclick="admin()" style="background:#fff;color:#172436;padding:12px 18px;border-radius:12px">Open Demo Admin Panel</button></div></div>`}
+function admin(){document.getElementById('app').innerHTML=`<div class="admin"><div class="admin-top"><b>☰</b><b>Admin Panel</b><span style="margin-left:auto;background:#22a65a;color:#fff;padding:5px 9px;border-radius:20px;font-size:12px">Admin</span><button onclick="location.reload()">↪</button></div><div class="admin-body"><aside class="side"><button class="active">▦ Dashboard</button><button>＋ Add Wallpaper</button><button>▣ Manage Wallpapers</button><button>▤ Categories</button><button>◆ Tags</button><button>♙ Users</button><button>▥ Analytics</button><button>⚙ Settings</button></aside><section class="dash"><div class="stats"><div class="stat"><small>Total Wallpapers</small><b>1,248</b></div><div class="stat"><small>Total Downloads</small><b>24.5K</b></div><div class="stat"><small>Total Users</small><b>1,320</b></div><div class="stat"><small>Categories</small><b>28</b></div></div><div class="admin-table"><h3>Recent Wallpapers</h3>${wallpapers.slice(0,5).map(w=>`<div class="row"><img src="${w.url}"><span>${w.title}</span><span class="hide-mobile">${w.cat}</span><span class="hide-mobile">1.2K</span><button class="edit">Edit</button></div>`).join('')}</div></section></div></div>`}
+function show(page){document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.page===page));if(page==='home')renderHome();else document.getElementById('content').innerHTML=page==='categories'?categories():page==='favorites'?favoritesPage():profile()}
+function renderHome(){document.getElementById('content').innerHTML=home()}
+function openViewer(id){current=wallpapers.find(w=>w.id===id);document.getElementById('viewerImg').src=current.url;document.getElementById('viewer').classList.add('show')}
+function closeViewer(){document.getElementById('viewer').classList.remove('show')}
+function toggleFavorite(){if(!current)return;if(favorites.includes(current.id))favorites=favorites.filter(x=>x!==current.id);else favorites.push(current.id);localStorage.setItem('wh_fav',JSON.stringify(favorites))}
+async function shareCurrent(){if(!current)return;let text=current.title+' - Wallpaper Hub';if(navigator.share){try{await navigator.share({title:current.title,text,url:current.url})}catch(e){}}else navigator.clipboard?.writeText(current.url)}
+function downloadCurrent(){if(!current)return;const a=document.createElement('a');a.href=current.url;a.target='_blank';a.rel='noopener';a.download=current.title.replace(/\s+/g,'-')+'.jpg';a.click()}
+if(localStorage.getItem('wh_login'))login();
+else document.getElementById('login').classList.remove('hidden');
+</script>
+</body>
+</html>
